@@ -16,22 +16,26 @@ program
 		const rawData2 = readFileSync(resolve(cwd(), filepath2));
 		const data1 = JSON.parse(rawData1);
 		const data2 = JSON.parse(rawData2);
-		const uniqueKeys = _.uniq([...Object.keys(data1), ...Object.keys(data2)]);
+		const keys1 = Object.keys(data1);
+		const keys2 = Object.keys(data2);
+		const uniqueKeys = _.uniq([...keys1, ...keys2]);
 		const result = uniqueKeys.reduce((acc, key) => {
-			if (data1.includes(key) && data2.includes(key)) {
+			if (keys1.includes(key) && keys2.includes(key)) {
 				if (data1[key] === data2[key]) {
 					acc.push(`${key}: ${data1[key]}`);
 				} else {
 					acc.push(`- ${key}: ${data1[key]}`);
 					acc.push(`+ ${key}: ${data2[key]}`);
 				}
-			} else if (data1.includes(key)) {
+			} else if (keys1.includes(key)) {
 				acc.push(`- ${key}: ${data1[key]}`);
-			} else if (data2.includes(key)) {
+			} else if (keys2.includes(key)) {
 				acc.push(`+ ${key}: ${data2[key]}`);
 			}
-			return result.join('/n');
-		});
+			return acc;
+		}, []);
+		console.log(result.join('\n'));
+		return result.join('\n');
 	});
 
 program.parse(process.argv);
