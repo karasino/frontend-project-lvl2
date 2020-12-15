@@ -1,16 +1,10 @@
-import { readFileSync } from 'fs';
-import { cwd } from 'process';
-import { resolve } from 'path';
+import { extname } from 'path';
 import _ from 'lodash';
-
-const getJsonData = (filepath) => {
-  const rawData = readFileSync(resolve(cwd(), filepath));
-  return JSON.parse(rawData);
-};
+import parser from './parsers';
 
 export default (filepath1, filepath2) => {
-  const data1 = getJsonData(filepath1);
-  const data2 = getJsonData(filepath2);
+  const data1 = parser[extname(filepath1)](filepath1);
+  const data2 = parser[extname(filepath2)](filepath2);
   const keys1 = Object.keys(data1);
   const keys2 = Object.keys(data2);
   const uniqueKeys = _.uniq([...keys1, ...keys2]);
