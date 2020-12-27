@@ -1,4 +1,6 @@
-import { isObject } from './genDiff';
+import _ from 'lodash';
+
+const isObject = (obj) => _.isObject(obj) && !_.isArray(obj);
 
 const genIndents = (depth) => ' '.repeat(depth);
 

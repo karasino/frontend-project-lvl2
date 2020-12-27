@@ -1,10 +1,11 @@
 import { extname } from 'path';
 import _ from 'lodash';
 import parser from './parsers';
+import formatters from './formatters/index';
 
 const isObject = (obj) => _.isObject(obj) && !_.isArray(obj);
 
-export default (filepath1, filepath2) => {
+export default (filepath1, filepath2, formatterName = 'stylish') => {
   const data1 = parser[extname(filepath1)](filepath1);
   const data2 = parser[extname(filepath2)](filepath2);
   const iter = (depth, obj1, obj2) => {
@@ -41,7 +42,6 @@ export default (filepath1, filepath2) => {
     });
     return diff;
   };
-  return iter(2, data1, data2);
+  const formatter = formatters[formatterName];
+  return formatter(iter(2, data1, data2));
 };
-
-export { isObject };
