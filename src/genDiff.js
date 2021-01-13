@@ -1,7 +1,7 @@
 import { extname } from 'path';
 import _ from 'lodash';
-import parser from './parsers';
-import formatters from './formatters/index';
+import parser from './parsers.js';
+import formatters from './formatters/index.js';
 
 const isObject = (obj) => _.isObject(obj) && !_.isArray(obj);
 

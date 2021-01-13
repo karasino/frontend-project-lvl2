@@ -8,7 +8,6 @@ const parseValue = (value) => {
 };
 
 export default (data) => {
-  console.log(JSON.stringify(data));
   const iter = (acc, path, diffArr) => {
     let newAcc = acc;
     diffArr.forEach((diff) => {

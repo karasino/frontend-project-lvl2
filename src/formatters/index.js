@@ -1,6 +1,6 @@
-import stylish from './stylish';
-import plain from './plain';
-import json from './json';
+import stylish from './stylish.js';
+import plain from './plain.js';
+import json from './json.js';
 
 export default {
   stylish,
