@@ -5,7 +5,7 @@ lint:
 		npx eslint
 
 install:
-		install-deps
+		npm ci
 
 install-deps:
 		npm ci
