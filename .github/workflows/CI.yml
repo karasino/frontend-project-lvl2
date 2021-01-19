@@ -32,10 +32,10 @@ jobs:
     - name: run linter
       run: |
         make lint
-    - name: Connect code coverage
-      uses: paambaati/codeclimate-action@v2.7.5
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATES_TEST_KEY }}
-      with:
-        coverageCommand: make test-coverage
-        debug: true
+    # - name: Connect code coverage
+      # uses: paambaati/codeclimate-action@v2.7.5
+      # env:
+        # CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATES_TEST_KEY }}
+      # with:
+        # coverageCommand: make test-coverage
+        # debug: true
