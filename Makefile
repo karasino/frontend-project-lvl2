@@ -7,9 +7,6 @@ lint:
 install:
 		npm ci
 
-install-deps:
-		npm ci
-
 run:
 		bin/genDiff.js
 
