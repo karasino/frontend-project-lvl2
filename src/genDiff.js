@@ -5,9 +5,20 @@ import formatters from './formatters/index.js';
 
 const isObject = (obj) => _.isObject(obj) && !_.isArray(obj);
 
+const validExtensions = ['.json', '.yml'];
+const validFormatters = ['stylish', 'plain', 'json'];
+
 export default (filepath1, filepath2, formatterName = 'stylish') => {
-  const data1 = parser[extname(filepath1)](filepath1);
-  const data2 = parser[extname(filepath2)](filepath2);
+  const file1Extension = extname(filepath1);
+  const file2Extension = extname(filepath2);
+  if (!validExtensions.includes(file1Extension) || !validExtensions.includes(file2Extension)) {
+    throw new Error('Unsupported file extension!');
+  }
+  if (!validFormatters.includes(formatterName)) {
+    throw new Error('Unsuppurted formatter!');
+  }
+  const data1 = parser[file1Extension](filepath1);
+  const data2 = parser[file2Extension](filepath2);
   const iter = (depth, obj1, obj2) => {
     const keys1 = Object.keys(obj1);
     const keys2 = Object.keys(obj2);

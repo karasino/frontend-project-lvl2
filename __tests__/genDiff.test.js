@@ -1,48 +1,69 @@
 import { readFileSync } from 'fs';
-import { cwd } from 'process';
-import { resolve, join, dirname } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { test, expect, beforeAll } from '@jest/globals';
+import { test, expect, describe } from '@jest/globals';
 import genDiff from '../src/genDiff';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => join(__dirname, '..', '__fixtures__', filename);
+const getFixture = (filename) => readFileSync(getFixturePath(filename), 'utf-8');
 
-let jsonFilepath1;
-let jsonFilepath2;
-let yamlFilepath1;
-let yamlFilepath2;
-let resultStylish;
-let resultPlain;
+const jsonFilepath1 = getFixturePath('file1.json');
+const jsonFilepath2 = getFixturePath('file2.json');
+const yamlFilepath1 = getFixturePath('file1.yml');
+const yamlFilepath2 = getFixturePath('file2.yml');
+const txtFilepath = getFixturePath('file1.txt');
+const resultStylish = getFixture('resultStylish.txt');
+const resultPlain = getFixture('resultPlain.txt');
+const resultJson = getFixture('resultJson.json');
 
-beforeAll(() => {
-  jsonFilepath1 = getFixturePath('file1.json');
-  jsonFilepath2 = getFixturePath('file2.json');
-  yamlFilepath1 = getFixturePath('file1.yml');
-  yamlFilepath2 = getFixturePath('file2.yml');
-  const resultStylishFilepath = getFixturePath('resultStylish.txt');
-  const resultPlainFilepath = getFixturePath('resultPlain.txt');
-  resultStylish = readFileSync(resolve(cwd(), resultStylishFilepath), 'utf-8');
-  resultPlain = readFileSync(resolve(cwd(), resultPlainFilepath), 'utf-8');
+describe('test stylish formatter with different file types', () => {
+  test.each([
+    [jsonFilepath1, jsonFilepath2, resultStylish, 'stylish'],
+    [jsonFilepath1, yamlFilepath2, resultStylish, 'stylish'],
+    [yamlFilepath1, jsonFilepath2, resultStylish, 'stylish'],
+    [yamlFilepath1, yamlFilepath2, resultStylish, 'stylish'],
+  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
+    const actual = genDiff(filepath1, filepath2, formatter);
+    expect(actual).toBe(expected);
+  });
 });
 
-test('genDiff stylish json json', () => {
-  const actual = genDiff(jsonFilepath1, jsonFilepath2);
-  expect(actual).toBe(resultStylish);
+describe('test plain formatter with different file types', () => {
+  test.each([
+    [jsonFilepath1, jsonFilepath2, resultPlain, 'plain'],
+    [jsonFilepath1, yamlFilepath2, resultPlain, 'plain'],
+    [yamlFilepath1, jsonFilepath2, resultPlain, 'plain'],
+    [yamlFilepath1, yamlFilepath2, resultPlain, 'plain'],
+  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
+    const actual = genDiff(filepath1, filepath2, formatter);
+    expect(actual).toBe(expected);
+  });
 });
 
-test('genDiff plain yaml yaml', () => {
-  const actual = genDiff(yamlFilepath1, yamlFilepath2, 'plain');
-  expect(actual).toBe(resultPlain);
+describe('test json formatter with different file types', () => {
+  test.each([
+    [jsonFilepath1, jsonFilepath2, resultJson, 'json'],
+    [jsonFilepath1, yamlFilepath2, resultJson, 'json'],
+    [yamlFilepath1, jsonFilepath2, resultJson, 'json'],
+    [yamlFilepath1, yamlFilepath2, resultJson, 'json'],
+  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
+    const actual = genDiff(filepath1, filepath2, formatter);
+    expect(actual).toBe(expected);
+  });
 });
 
-test('genDiff stylish json yaml', () => {
-  const actual = genDiff(jsonFilepath1, yamlFilepath2);
-  expect(actual).toBe(resultStylish);
-});
+describe('test negative cases', () => {
+  test('unsupported file extension', () => {
+    expect(() => {
+      genDiff(txtFilepath, jsonFilepath2);
+    }).toThrow();
+  });
 
-test('genDiff plain yaml json', () => {
-  const actual = genDiff(yamlFilepath1, jsonFilepath2, 'plain');
-  expect(actual).toBe(resultPlain);
+  test('unsupported formatter', () => {
+    expect(() => {
+      genDiff(jsonFilepath1, jsonFilepath2, 'superformatter');
+    }).toThrow();
+  });
 });

@@ -1,4 +1,5 @@
 ### Diff generator package
+[![CI](https://github.com/karasino/frontend-project-lvl2/workflows/CI/badge.svg)](https://github.com/karasino/frontend-project-lvl2/actions)
 [![Actions Status](https://github.com/karasino/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/karasino/frontend-project-lvl2/actions)
 <a href="https://codeclimate.com/github/karasino/frontend-project-lvl2/maintainability"><img src="https://api.codeclimate.com/v1/badges/03a350e1b4dc0141fb64/maintainability" /></a>
 <a href="https://codeclimate.com/github/karasino/frontend-project-lvl2/test_coverage"><img src="https://api.codeclimate.com/v1/badges/03a350e1b4dc0141fb64/test_coverage" /></a>
@@ -23,11 +24,26 @@ Property 'common.follow' was added with value: false
 Property 'common.setting2' was removed
 Property 'common.setting3' was updated. From true to null
 ```
-- json (data in json format)
-
-## Setup:
+- json
 ```sh
-$ make install
+{
+  "name": "group2",
+  "children": null,
+  "depth": 2,
+  "status": "deleted",
+  "value": {
+    "abc": 12345,
+    "deep": {
+      "id": 45
+    }
+  }
+}
+```
+
+## Install:
+```sh
+$ git clone https://github.com/karasino/frontend-project-lvl2
+$ npm link
 ```
 
 ## Run tests:
@@ -35,7 +51,23 @@ $ make install
 $ make test
 ```
 
+## Show help:
+```sh
+$ gendiff -h
+```
+
 ## Usage:
 ```sh
-$ genDiff -f plain filepath1 filepath2
+$ gendiff -f <formatter> <filepath1> <filepath2>
 ```
+
+## Examples:
+
+Stylish
+[![asciicast](https://asciinema.org/a/h8dLtiQUSAN5gwgU0tYeBIs5x.svg)](https://asciinema.org/a/h8dLtiQUSAN5gwgU0tYeBIs5x)
+
+Plain
+[![asciicast](https://asciinema.org/a/oxi1HLeSDag4DLR5xcvD49xCZ.svg)](https://asciinema.org/a/oxi1HLeSDag4DLR5xcvD49xCZ)
+
+JSON
+[![asciicast](https://asciinema.org/a/ircKOyBek6lk8dgYErkM9pSl7.svg)](https://asciinema.org/a/ircKOyBek6lk8dgYErkM9pSl7)

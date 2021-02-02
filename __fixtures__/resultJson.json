@@ -1,0 +1,144 @@
+[
+  {
+    "name": "common",
+    "children": [
+      {
+        "name": "follow",
+        "children": null,
+        "depth": 6,
+        "status": "added",
+        "value": false
+      },
+      {
+        "name": "setting1",
+        "children": null,
+        "depth": 6,
+        "status": "untouched",
+        "value": "Value 1"
+      },
+      {
+        "name": "setting2",
+        "children": null,
+        "depth": 6,
+        "status": "deleted",
+        "value": 200
+      },
+      {
+        "name": "setting3",
+        "children": null,
+        "depth": 6,
+        "status": "modified",
+        "value": null,
+        "oldValue": true
+      },
+      {
+        "name": "setting4",
+        "children": null,
+        "depth": 6,
+        "status": "added",
+        "value": "blah blah"
+      },
+      {
+        "name": "setting5",
+        "children": null,
+        "depth": 6,
+        "status": "added",
+        "value": {
+          "key5": "value5"
+        }
+      },
+      {
+        "name": "setting6",
+        "children": [
+          {
+            "name": "doge",
+            "children": [
+              {
+                "name": "wow",
+                "children": null,
+                "depth": 14,
+                "status": "modified",
+                "value": "so much",
+                "oldValue": ""
+              }
+            ],
+            "depth": 10
+          },
+          {
+            "name": "key",
+            "children": null,
+            "depth": 10,
+            "status": "untouched",
+            "value": "value"
+          },
+          {
+            "name": "ops",
+            "children": null,
+            "depth": 10,
+            "status": "added",
+            "value": "vops"
+          }
+        ],
+        "depth": 6
+      }
+    ],
+    "depth": 2
+  },
+  {
+    "name": "group1",
+    "children": [
+      {
+        "name": "baz",
+        "children": null,
+        "depth": 6,
+        "status": "modified",
+        "value": "bars",
+        "oldValue": "bas"
+      },
+      {
+        "name": "foo",
+        "children": null,
+        "depth": 6,
+        "status": "untouched",
+        "value": "bar"
+      },
+      {
+        "name": "nest",
+        "children": null,
+        "depth": 6,
+        "status": "modified",
+        "value": "str",
+        "oldValue": {
+          "key": "value"
+        }
+      }
+    ],
+    "depth": 2
+  },
+  {
+    "name": "group2",
+    "children": null,
+    "depth": 2,
+    "status": "deleted",
+    "value": {
+      "abc": 12345,
+      "deep": {
+        "id": 45
+      }
+    }
+  },
+  {
+    "name": "group3",
+    "children": null,
+    "depth": 2,
+    "status": "added",
+    "value": {
+      "fee": 100500,
+      "deep": {
+        "id": {
+          "number": 45
+        }
+      }
+    }
+  }
+]
