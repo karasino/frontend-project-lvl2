@@ -43,6 +43,7 @@ Property 'common.setting3' was updated. From true to null
 ## Install:
 ```sh
 $ git clone https://github.com/karasino/frontend-project-lvl2
+$ cd <project folder>
 $ npm link
 ```
 

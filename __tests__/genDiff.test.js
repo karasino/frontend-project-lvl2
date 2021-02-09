@@ -18,52 +18,31 @@ const resultStylish = getFixture('resultStylish.txt');
 const resultPlain = getFixture('resultPlain.txt');
 const resultJson = getFixture('resultJson.json');
 
-describe('test stylish formatter with different file types', () => {
+describe('test genDiff', () => {
   test.each([
-    [jsonFilepath1, jsonFilepath2, resultStylish, 'stylish'],
-    [jsonFilepath1, yamlFilepath2, resultStylish, 'stylish'],
-    [yamlFilepath1, jsonFilepath2, resultStylish, 'stylish'],
-    [yamlFilepath1, yamlFilepath2, resultStylish, 'stylish'],
-  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
+    [jsonFilepath1, jsonFilepath2, undefined, resultStylish],
+    [jsonFilepath1, yamlFilepath2, 'stylish', resultStylish],
+    [yamlFilepath1, jsonFilepath2, 'plain', resultPlain],
+  ])('comparison %#', (filepath1, filepath2, formatter, expected) => {
     const actual = genDiff(filepath1, filepath2, formatter);
     expect(actual).toBe(expected);
   });
-});
 
-describe('test plain formatter with different file types', () => {
-  test.each([
-    [jsonFilepath1, jsonFilepath2, resultPlain, 'plain'],
-    [jsonFilepath1, yamlFilepath2, resultPlain, 'plain'],
-    [yamlFilepath1, jsonFilepath2, resultPlain, 'plain'],
-    [yamlFilepath1, yamlFilepath2, resultPlain, 'plain'],
-  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
-    const actual = genDiff(filepath1, filepath2, formatter);
-    expect(actual).toBe(expected);
+  test('with json formatter', () => {
+    const genDiffOutput = genDiff(jsonFilepath1, yamlFilepath2, 'json');
+    const actual = JSON.stringify(genDiffOutput, null, 2);
+    expect(actual).toBe(resultJson);
   });
-});
 
-describe('test json formatter with different file types', () => {
-  test.each([
-    [jsonFilepath1, jsonFilepath2, resultJson, 'json'],
-    [jsonFilepath1, yamlFilepath2, resultJson, 'json'],
-    [yamlFilepath1, jsonFilepath2, resultJson, 'json'],
-    [yamlFilepath1, yamlFilepath2, resultJson, 'json'],
-  ])('comparison %#', (filepath1, filepath2, expected, formatter) => {
-    const actual = genDiff(filepath1, filepath2, formatter);
-    expect(actual).toBe(expected);
-  });
-});
-
-describe('test negative cases', () => {
   test('unsupported file extension', () => {
     expect(() => {
       genDiff(txtFilepath, jsonFilepath2);
-    }).toThrow();
+    }).toThrowError('Unsupported file extension!');
   });
 
   test('unsupported formatter', () => {
     expect(() => {
       genDiff(jsonFilepath1, jsonFilepath2, 'superformatter');
-    }).toThrow();
+    }).toThrowError('Unsuppurted formatter!');
   });
 });
