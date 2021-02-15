@@ -6,7 +6,7 @@ const validFormatters = ['stylish', 'plain', 'json'];
 
 export default (formatterName, diffObj) => {
   if (!validFormatters.includes(formatterName)) {
-    throw new Error('Unsuppurted formatter!');
+    throw new Error('Unsupported format!');
   }
   const formatters = {
     stylish,

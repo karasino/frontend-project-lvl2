@@ -23,15 +23,10 @@ describe('test genDiff', () => {
     [jsonFilepath1, jsonFilepath2, undefined, resultStylish],
     [jsonFilepath1, yamlFilepath2, 'stylish', resultStylish],
     [yamlFilepath1, jsonFilepath2, 'plain', resultPlain],
+    [jsonFilepath1, yamlFilepath2, 'json', resultJson],
   ])('comparison %#', (filepath1, filepath2, formatter, expected) => {
     const actual = genDiff(filepath1, filepath2, formatter);
     expect(actual).toBe(expected);
-  });
-
-  test('with json formatter', () => {
-    const genDiffOutput = genDiff(jsonFilepath1, yamlFilepath2, 'json');
-    const actual = JSON.stringify(genDiffOutput, null, 2);
-    expect(actual).toBe(resultJson);
   });
 
   test('unsupported file extension', () => {
@@ -42,7 +37,7 @@ describe('test genDiff', () => {
 
   test('unsupported formatter', () => {
     expect(() => {
-      genDiff(jsonFilepath1, jsonFilepath2, 'superformatter');
-    }).toThrowError('Unsuppurted formatter!');
+      genDiff(jsonFilepath1, jsonFilepath2, 'yaml');
+    }).toThrowError('Unsupported format!');
   });
 });

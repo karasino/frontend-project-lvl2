@@ -1,64 +1,62 @@
 import _ from 'lodash';
 
-const isObject = (obj) => _.isObject(obj) && !_.isArray(obj);
+const genIndent = (depth) => ' '.repeat(depth);
 
-const genIndents = (depth) => ' '.repeat(depth);
-
-const parseValue = (depth, value) => {
-  if (isObject(value)) {
-    const iter = (acc, obj, newDepth) => {
-      Object.keys(obj).forEach((elem) => {
-        const indents = genIndents(newDepth);
-        if (isObject(obj[elem])) {
-          acc.push(`${indents}  ${elem}: ${iter([], obj[elem], newDepth + 4)}`);
+const parseValue = (value, spacesAmount) => {
+  if (_.isObject(value)) {
+    const iter = (obj, spaces) => {
+      const parsedValue = Object.keys(obj).reduce((acc, elem) => {
+        const indents = genIndent(spaces);
+        if (_.isObject(obj[elem])) {
+          acc.push(`${indents}  ${elem}: ${iter(obj[elem], spaces + 4)}`);
         } else {
           acc.push(`${indents}  ${elem}: ${obj[elem]}`);
         }
-      });
-      acc.unshift('{');
-      acc.push(`${genIndents(newDepth - 2)}}`);
-      return acc.join('\n');
+        return acc;
+      }, []);
+      parsedValue.unshift('{');
+      parsedValue.push(`${genIndent(spaces - 2)}}`);
+      return parsedValue.join('\n');
     };
-    return iter([], value, depth);
+    return iter(value, spacesAmount);
   }
   return value;
 };
 
-export default (data) => {
-  const iter = (acc, diffArr, diffIndent = '') => {
-    diffArr.forEach((diff) => {
+export default (ast) => {
+  const iter = (tree, spacesAmount) => {
+    const indent = genIndent(spacesAmount);
+    const diff = tree.reduce((acc, node) => {
       const {
-        name,
-        status,
+        key,
+        type,
         value,
-        children,
-        depth,
-      } = diff;
-      const indents = genIndents(depth);
-      if (children) {
-        acc.push(`${indents}  ${name}: ${iter([], children, genIndents(depth + 2))}`);
-      }
-      switch (status) {
-        case 'untouched':
-          acc.push(`${indents}  ${name}: ${parseValue(depth + 4, value)}`);
+      } = node;
+      switch (type) {
+        case 'nested':
+          acc.push(`${indent}  ${key}: ${iter(value, spacesAmount + 4)}`);
+          break;
+        case 'unmodified':
+          acc.push(`${indent}  ${key}: ${parseValue(value, spacesAmount + 4)}`);
           break;
         case 'modified':
-          acc.push(`${indents}- ${name}: ${parseValue(depth + 4, diff.oldValue)}`);
-          acc.push(`${indents}+ ${name}: ${parseValue(depth + 4, value)}`);
+          acc.push(`${indent}- ${key}: ${parseValue(value.old, spacesAmount + 4)}`);
+          acc.push(`${indent}+ ${key}: ${parseValue(value.new, spacesAmount + 4)}`);
           break;
         case 'deleted':
-          acc.push(`${indents}- ${name}: ${parseValue(depth + 4, value)}`);
+          acc.push(`${indent}- ${key}: ${parseValue(value, spacesAmount + 4)}`);
           break;
         case 'added':
-          acc.push(`${indents}+ ${name}: ${parseValue(depth + 4, value)}`);
+          acc.push(`${indent}+ ${key}: ${parseValue(value, spacesAmount + 4)}`);
           break;
         default:
           break;
       }
-    });
-    acc.unshift('{');
-    acc.push(`${diffIndent}}`);
-    return acc.join('\n');
+      return acc;
+    }, []);
+    diff.unshift('{');
+    diff.push(`${genIndent(spacesAmount - 2)}}`);
+    return diff.join('\n');
   };
-  return iter([], data);
+  return iter(ast, 2);
 };
