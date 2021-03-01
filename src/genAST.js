@@ -32,7 +32,7 @@ const diffTypes = [
 
 const genAST = (obj1, obj2) => {
   const uniqueKeys = _.union(Object.keys(obj1), Object.keys(obj2));
-  const sortedKeys = [...uniqueKeys].sort();
+  const sortedKeys = _.sortBy(uniqueKeys);
   return sortedKeys.map((key) => {
     const { type, process } = _.find(diffTypes, (item) => item.check(obj1, obj2, key));
     const value = process(obj1[key], obj2[key], genAST);
