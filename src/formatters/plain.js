@@ -6,35 +6,30 @@ const parseValue = (value) => {
 };
 
 export default (data) => {
-  const iter = (acc, path, diffArr) => {
-    let newAcc = acc;
-    diffArr.forEach((diff) => {
+  const iter = (path, tree) => {
+    const diff = tree.map((node) => {
       const {
         key,
         type,
         value,
-      } = diff;
+      } = node;
       const newPath = [...path, key];
-      if (type === 'nested') {
-        newAcc = iter(acc, newPath, value);
-      } else {
-        const pathStr = newPath.join('.');
-        switch (type) {
-          case 'modified':
-            newAcc.push(`Property '${pathStr}' was updated. From ${parseValue(value.old)} to ${parseValue(value.new)}`);
-            break;
-          case 'deleted':
-            newAcc.push(`Property '${pathStr}' was removed`);
-            break;
-          case 'added':
-            newAcc.push(`Property '${pathStr}' was added with value: ${parseValue(value)}`);
-            break;
-          default:
-            break;
-        }
+      const pathStr = newPath.join('.');
+      switch (type) {
+        case 'nested':
+          return iter(newPath, value);
+        case 'modified':
+          return `Property '${pathStr}' was updated. From ${parseValue(value.old)} to ${parseValue(value.new)}`;
+        case 'deleted':
+          return `Property '${pathStr}' was removed`;
+        case 'added':
+          return `Property '${pathStr}' was added with value: ${parseValue(value)}`;
+        default:
+          break;
       }
+      return false;
     });
-    return newAcc;
+    return _.compact(diff).join('\n');
   };
-  return iter([], [], data).join('\n');
+  return iter([], data);
 };
