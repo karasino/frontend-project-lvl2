@@ -6,13 +6,13 @@ const getYamlData = (rawData) => yaml.safeLoad(rawData);
 
 const validExtensions = ['.json', '.yml'];
 
-export default (fileExtension, rawData) => {
-  if (!validExtensions.includes(fileExtension)) {
+export default (rawData, dataType) => {
+  if (!validExtensions.includes(dataType)) {
     throw new Error('Unsupported file extension!');
   }
   const parsers = {
     '.json': getJsonData,
     '.yml': getYamlData,
   };
-  return parsers[fileExtension](rawData);
+  return parsers[dataType](rawData);
 };

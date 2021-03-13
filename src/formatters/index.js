@@ -4,7 +4,7 @@ import json from './json.js';
 
 const validFormatters = ['stylish', 'plain', 'json'];
 
-export default (formatterName, diffObj) => {
+export default (diffObj, formatterName) => {
   if (!validFormatters.includes(formatterName)) {
     throw new Error('Unsupported format!');
   }

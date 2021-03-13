@@ -5,7 +5,7 @@ const parseValue = (value) => {
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-export default (data) => {
+export default (rootNode) => {
   const iter = (path, tree) => {
     const diff = tree.map((node) => {
       const {
@@ -17,9 +17,9 @@ export default (data) => {
       const pathStr = newPath.join('.');
       switch (type) {
         case 'nested':
-          return iter(newPath, value);
+          return iter(newPath, node.children);
         case 'modified':
-          return `Property '${pathStr}' was updated. From ${parseValue(value.old)} to ${parseValue(value.new)}`;
+          return `Property '${pathStr}' was updated. From ${parseValue(node.oldValue)} to ${parseValue(node.newValue)}`;
         case 'deleted':
           return `Property '${pathStr}' was removed`;
         case 'added':
@@ -31,5 +31,5 @@ export default (data) => {
     });
     return _.compact(diff).join('\n');
   };
-  return iter([], data);
+  return iter([], rootNode.children);
 };
