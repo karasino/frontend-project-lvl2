@@ -29,9 +29,9 @@ describe('test genDiff', () => {
   });
 
   test('json format', () => {
-    const raw = genDiff(jsonFilepath1, yamlFilepath2, 'json');
-    const actual = JSON.stringify(JSON.parse(raw), null, '  ');
-    expect(actual).toBe(resultJson);
+    const rawDiff = genDiff(jsonFilepath1, yamlFilepath2, 'json');
+    const formattedDiff = JSON.stringify(JSON.parse(rawDiff), null, 2);
+    expect(formattedDiff).toBe(resultJson);
   });
 
   test('unsupported file extension', () => {
