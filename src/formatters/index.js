@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import stylish from './stylish.js';
 import plain from './plain.js';
 import json from './json.js';
@@ -8,9 +9,9 @@ const formatters = {
   json,
 };
 
-export default (diffNodes, formatName) => {
-  if (!Object.keys(formatters).includes(formatName)) {
+export default (diffTree, formatName) => {
+  if (!_.has(formatters, formatName)) {
     throw new Error('Unsupported format!');
   }
-  return formatters[formatName](diffNodes);
+  return formatters[formatName](diffTree);
 };
