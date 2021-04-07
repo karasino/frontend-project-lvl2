@@ -1,35 +1,29 @@
 import _ from 'lodash';
 
-const parseValue = (value) => {
-  if (_.isPlainObject(value)) return '[complex value]';
+const stringifyValue = (value) => {
+  if (_.isObject(value)) return '[complex value]';
   return typeof value === 'string' ? `'${value}'` : value;
 };
 
-export default (rootNode) => {
-  const iter = (path, tree) => {
-    const diff = tree.map((node) => {
-      const {
-        key,
-        type,
-        value,
-      } = node;
-      const newPath = [...path, key];
-      const pathStr = newPath.join('.');
-      switch (type) {
-        case 'nested':
-          return iter(newPath, node.children);
-        case 'modified':
-          return `Property '${pathStr}' was updated. From ${parseValue(node.oldValue)} to ${parseValue(node.newValue)}`;
-        case 'deleted':
-          return `Property '${pathStr}' was removed`;
-        case 'added':
-          return `Property '${pathStr}' was added with value: ${parseValue(value)}`;
-        default:
-          break;
-      }
-      return false;
-    });
-    return _.compact(diff).join('\n');
-  };
-  return iter([], rootNode.children);
+const processNode = (node, path) => {
+  const newPath = [...path, node.key];
+  const pathString = newPath.join('.');
+  switch (node.type) {
+    case 'root':
+      return _.compact(node.children.map((childNode) => processNode(childNode, path))).join('\n');
+    case 'nested':
+      return _.compact(node.children.map((childNode) => processNode(childNode, newPath))).join('\n');
+    case 'unmodified':
+      return '';
+    case 'modified':
+      return `Property '${pathString}' was updated. From ${stringifyValue(node.oldValue)} to ${stringifyValue(node.newValue)}`;
+    case 'deleted':
+      return `Property '${pathString}' was removed`;
+    case 'added':
+      return `Property '${pathString}' was added with value: ${stringifyValue(node.value)}`;
+    default:
+      throw new Error('Unsupported node type!');
+  }
 };
+
+export default (tree) => processNode(tree, []);

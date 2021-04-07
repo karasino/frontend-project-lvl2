@@ -1,37 +1,41 @@
 import _ from 'lodash';
 
-const stringifyValue = (value, depth) => {
-  if (_.isPlainObject(value)) {
-    const indent = ' '.repeat(depth * 4);
-    const stringifiedValue = Object.keys(value).map((elem) => (
-      `${indent}  ${elem}: ${stringifyValue(value[elem], depth + 1)}`));
-    return ['{', ...stringifiedValue, `${indent.slice(0, -2)}}`].join('\n');
-  }
-  return value;
-};
+const indent = (depth) => `  ${' '.repeat(depth * 4)}`;
 
-const processNode = (node, depth) => {
-  const indent = ' '.repeat(depth * 4);
+const processNode = (node, depth, handleValue) => {
   switch (node.type) {
     case 'root':
-      return `{\n${node.children.map((childNode) => processNode(childNode, 0.5)).join('\n')}\n}`;
+      return `{\n${node.children.map((childNode) => processNode(childNode, depth, handleValue)).join('\n')}\n}`;
     case 'nested':
-      return `${indent}  ${node.key}: {\n${node.children.map((childNode) => (
-        processNode(childNode, depth + 1))).join('\n')}\n${indent.concat('  ')}}`;
+      return `${indent(depth)}  ${node.key}: {\n${node.children.map((childNode) => (
+        processNode(childNode, depth + 1, handleValue))).join('\n')}\n${indent(depth)}  }`;
     case 'unmodified':
-      return `${indent}  ${node.key}: ${stringifyValue(node.value, depth + 1)}`;
+      return `${indent(depth)}  ${node.key}: ${handleValue(node.value, depth)}`;
     case 'modified':
       return [
-        `${indent}- ${node.key}: ${stringifyValue(node.oldValue, depth + 1)}`,
-        `${indent}+ ${node.key}: ${stringifyValue(node.newValue, depth + 1)}`,
+        `${indent(depth)}- ${node.key}: ${handleValue(node.oldValue, depth)}`,
+        `${indent(depth)}+ ${node.key}: ${handleValue(node.newValue, depth)}`,
       ].join('\n');
     case 'deleted':
-      return `${indent}- ${node.key}: ${stringifyValue(node.value, depth + 1)}`;
+      return `${indent(depth)}- ${node.key}: ${handleValue(node.value, depth)}`;
     case 'added':
-      return `${indent}+ ${node.key}: ${stringifyValue(node.value, depth + 1)}`;
+      return `${indent(depth)}+ ${node.key}: ${handleValue(node.value, depth)}`;
     default:
       throw new Error('Unsupported node type!');
   }
 };
 
-export default (tree) => processNode(tree, 0);
+const stringifyValue = (value, depth) => {
+  if (!_.isPlainObject(value)) return value;
+  const stringifiedValue = Object.keys(value).map((key) => {
+    const node = {
+      type: 'unmodified',
+      key,
+      value: value[key],
+    };
+    return processNode(node, depth + 1, stringifyValue);
+  });
+  return ['{', ...stringifiedValue, `  ${indent(depth)}}`].join('\n');
+};
+
+export default (tree) => processNode(tree, 0, stringifyValue);
