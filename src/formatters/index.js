@@ -5,7 +5,7 @@ import plain from './plain.js';
 const formatters = {
   stylish,
   plain,
-  json: (node) => JSON.stringify(node),
+  json: JSON.stringify,
 };
 
 export default (diffTree, formatName) => {
