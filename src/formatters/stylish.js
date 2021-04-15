@@ -4,7 +4,7 @@ const indent = (depth) => ' '.repeat(depth * 4 - 2);
 
 const stringifyValue = (value, depth, handleNode) => {
   if (!_.isPlainObject(value)) return value;
-  const stringifiedValue = Object.keys(value).map((key) => {
+  const stringifiedProperties = Object.keys(value).map((key) => {
     const node = {
       type: 'unmodified',
       key,
@@ -12,7 +12,7 @@ const stringifyValue = (value, depth, handleNode) => {
     };
     return handleNode(node, depth + 1);
   });
-  return `{\n${stringifiedValue.join('\n')}\n  ${indent(depth)}}`;
+  return `{\n${stringifiedProperties.join('\n')}\n  ${indent(depth)}}`;
 };
 
 const processNode = (node, depth) => {
